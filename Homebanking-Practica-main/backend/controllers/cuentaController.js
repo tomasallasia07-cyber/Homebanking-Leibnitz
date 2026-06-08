@@ -31,10 +31,10 @@ const obtenerMovimientos = async (req, res) => {
 
   try {
     const result = await pool.query(
-      `SELECT m.id_movimiento, m.tipo, m.importe, m.descripcion, m.fecha,
+      `SELECT m.id, m.tipo, m.importe, m.descripcion, m.fecha,
               cb.cbu
        FROM Movimientos m
-       JOIN Cuentas_Bancarias cb ON m.id_cuenta = cb.id_cuenta
+       JOIN Cuentas_Bancarias cb ON m.cuenta_id = cb.id_cuenta
        JOIN Productos pr ON cb.id_producto = pr.id_producto
        WHERE pr.id_persona = $1
        ORDER BY m.fecha DESC`,

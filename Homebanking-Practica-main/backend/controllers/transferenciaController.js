@@ -9,7 +9,6 @@ const realizarTransferencia = async (req, res) => {
   const usuarioId = req.usuario.id;
 
   try {
-    // Obtener cuenta origen
     const cuentaOrigen = await pool.query(
       `SELECT cb.* FROM Cuentas_Bancarias cb
        JOIN Productos pr ON cb.id_producto = pr.id_producto
@@ -27,7 +26,6 @@ const realizarTransferencia = async (req, res) => {
       return res.status(400).json({ error: 'Saldo insuficiente' });
     }
 
-    // Buscar cuenta destino en nuestra base de datos
     const cuentaDestino = await pool.query(
       'SELECT * FROM Cuentas_Bancarias WHERE cbu = $1',
       [cbu_destino]
@@ -35,31 +33,27 @@ const realizarTransferencia = async (req, res) => {
 
     await pool.query('BEGIN');
 
-    // Restar saldo de origen
     await pool.query(
       'UPDATE Cuentas_Bancarias SET saldo = saldo - $1 WHERE id_cuenta = $2',
       [importe, origen.id_cuenta]
     );
 
-    // Registrar movimiento de salida
     await pool.query(
-      'INSERT INTO Movimientos (id_cuenta, tipo, importe, descripcion) VALUES ($1, $2, $3, $4)',
+      'INSERT INTO Movimientos (cuenta_id, tipo, importe, descripcion) VALUES ($1, $2, $3, $4)',
       [origen.id_cuenta, 'transferencia_salida', importe, `Transferencia a ${cbu_destino}`]
     );
 
     if (cuentaDestino.rows.length > 0) {
-      // Transferencia interna
       const destino = cuentaDestino.rows[0];
       await pool.query(
         'UPDATE Cuentas_Bancarias SET saldo = saldo + $1 WHERE id_cuenta = $2',
         [importe, destino.id_cuenta]
       );
       await pool.query(
-        'INSERT INTO Movimientos (id_cuenta, tipo, importe, descripcion) VALUES ($1, $2, $3, $4)',
+        'INSERT INTO Movimientos (cuenta_id, tipo, importe, descripcion) VALUES ($1, $2, $3, $4)',
         [destino.id_cuenta, 'transferencia_entrada', importe, `Transferencia desde ${origen.cbu}`]
       );
     } else {
-      // Transferencia externa - notificar al banco central
       try {
         const respuestaCentral = await fetch(`${BANCO_CENTRAL_URL}/transactions`, {
           method: 'POST',

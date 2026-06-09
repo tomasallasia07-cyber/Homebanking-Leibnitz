@@ -1,18 +1,30 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+import { useUser, UserButton } from '@clerk/clerk-react'
 
 function Dashboard() {
   const [cuentas, setCuentas] = useState([])
   const [error, setError] = useState('')
-  const navigate = useNavigate()
-  const usuario = JSON.parse(localStorage.getItem('usuario') || '{}')
-  const token = localStorage.getItem('token')
+  const { user } = useUser()
 
   useEffect(() => {
-    const fetchSaldo = async () => {
+    const iniciarSesion = async () => {
       try {
+        // Registrar o loguear con Clerk
+        await fetch('/api/auth/clerk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            clerk_id: user.id,
+            email: user.primaryEmailAddress?.emailAddress,
+            nombre: user.firstName,
+            apellido: user.lastName
+          })
+        })
+
+        // Obtener saldo
         const res = await fetch('/api/cuentas/saldo', {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${user.id}` }
         })
         const data = await res.json()
         if (!res.ok) {
@@ -24,14 +36,8 @@ function Dashboard() {
         setError('No se pudo conectar con el servidor')
       }
     }
-    fetchSaldo()
-  }, [])
-
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('usuario')
-    navigate('/')
-  }
+    if (user) iniciarSesion()
+  }, [user])
 
   return (
     <div style={styles.container}>
@@ -40,12 +46,12 @@ function Dashboard() {
         <div style={styles.navLinks}>
           <Link to="/transferencias" style={styles.navLink}>Transferencias</Link>
           <Link to="/movimientos" style={styles.navLink}>Movimientos</Link>
-          <button onClick={handleLogout} style={styles.logoutBtn}>Cerrar sesión</button>
+          <UserButton afterSignOutUrl="/" />
         </div>
       </div>
 
       <div style={styles.contenido}>
-        <h1 style={styles.bienvenida}>Bienvenido, {usuario.nombre} 👋</h1>
+        <h1 style={styles.bienvenida}>Bienvenido, {user?.firstName} 👋</h1>
 
         {error && <p style={styles.error}>{error}</p>}
 
@@ -85,7 +91,6 @@ const styles = {
   navTitulo: { color: 'white', margin: 0 },
   navLinks: { display: 'flex', gap: '16px', alignItems: 'center' },
   navLink: { color: 'white', textDecoration: 'none', fontSize: '15px' },
-  logoutBtn: { backgroundColor: 'transparent', border: '1px solid white', color: 'white', padding: '6px 14px', borderRadius: '6px', cursor: 'pointer' },
   contenido: { maxWidth: '600px', margin: '40px auto', padding: '0 16px' },
   bienvenida: { color: '#1a3c6e', marginBottom: '24px' },
   seccion: { color: '#333', marginBottom: '16px' },

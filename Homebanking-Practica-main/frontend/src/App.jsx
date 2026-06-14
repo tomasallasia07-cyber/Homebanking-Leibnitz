@@ -1,66 +1,67 @@
 import { SignedIn, SignedOut, SignInButton, SignUpButton } from '@clerk/clerk-react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useAxiosAuth } from './hooks/useAxiosAuth'
+import { PersonaProvider, usePersona } from './context/PersonaContext'
+import PaginaLogin from './pages/paginaLogin'
 import Dashboard from './pages/Dashboard'
 import Transferencias from './pages/Transferencias'
 import Movimientos from './pages/Movimientos'
+import RegisterPersonCentralBank from './components/auth/registerPersonCentralBank'
 
-function PaginaLogin() {
+function RutaProtegida({ children }) {
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h1 style={styles.titulo}>🏦 Banco Leibnitz</h1>
-        <h2 style={styles.subtitulo}>Bienvenido</h2>
-        <div style={styles.botones}>
-          <SignInButton mode="modal">
-            <button style={styles.boton}>Iniciar Sesión</button>
-          </SignInButton>
-          <SignUpButton mode="modal">
-            <button style={styles.botonSecundario}>Registrarse</button>
-          </SignUpButton>
-        </div>
-      </div>
-    </div>
+    <>
+      <SignedIn>
+        <PersonaProvider>{children}</PersonaProvider>
+      </SignedIn>
+      <SignedOut>
+        <Navigate to="/" replace />
+      </SignedOut>
+    </>
   )
 }
 
-const styles = {
-  container: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#f0f2f5' },
-  card: { backgroundColor: 'white', padding: '40px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.1)', width: '360px', textAlign: 'center' },
-  titulo: { color: '#1a3c6e', marginBottom: '4px' },
-  subtitulo: { color: '#555', marginBottom: '32px', fontWeight: 'normal' },
-  botones: { display: 'flex', flexDirection: 'column', gap: '12px' },
-  boton: { width: '100%', padding: '12px', backgroundColor: '#1a3c6e', color: 'white', border: 'none', borderRadius: '8px', fontSize: '16px', cursor: 'pointer' },
-  botonSecundario: { width: '100%', padding: '12px', backgroundColor: 'white', color: '#1a3c6e', border: '1px solid #1a3c6e', borderRadius: '8px', fontSize: '16px', cursor: 'pointer' }
+function GateOnboarding({ children }) {
+  const { cargando, tieneOnboarding } = usePersona()
+
+  if (cargando) return <p>Cargando...</p>
+  if (tieneOnboarding === false) return <Navigate to="/onboarding" replace />
+  return children
 }
 
 export default function App() {
+  useAxiosAuth()
+
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={
           <>
-            <SignedOut>
-              <PaginaLogin />
-            </SignedOut>
-            <SignedIn>
-              <Navigate to="/dashboard" />
-            </SignedIn>
+            <SignedOut><PaginaLogin /></SignedOut>
+            <SignedIn><Navigate to="/dashboard" /></SignedIn>
           </>
         } />
+
+        <Route path="/onboarding" element={
+          <RutaProtegida>
+            <RegisterPersonCentralBank />
+          </RutaProtegida>
+        } />
+
         <Route path="/dashboard" element={
-          <SignedIn>
-            <Dashboard />
-          </SignedIn>
+          <RutaProtegida>
+            <GateOnboarding><Dashboard /></GateOnboarding>
+          </RutaProtegida>
         } />
         <Route path="/transferencias" element={
-          <SignedIn>
-            <Transferencias />
-          </SignedIn>
+          <RutaProtegida>
+            <GateOnboarding><Transferencias /></GateOnboarding>
+          </RutaProtegida>
         } />
         <Route path="/movimientos" element={
-          <SignedIn>
-            <Movimientos />
-          </SignedIn>
+          <RutaProtegida>
+            <GateOnboarding><Movimientos /></GateOnboarding>
+          </RutaProtegida>
         } />
       </Routes>
     </BrowserRouter>

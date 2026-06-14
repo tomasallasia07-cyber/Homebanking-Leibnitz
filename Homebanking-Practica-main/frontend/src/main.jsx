@@ -7,7 +7,7 @@ import './index.css'
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
 if (!PUBLISHABLE_KEY) {
-  throw new Error('Falta la clave pública de Clerk')
+  throw new Error('Falta VITE_CLERK_PUBLISHABLE_KEY en el .env')
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(

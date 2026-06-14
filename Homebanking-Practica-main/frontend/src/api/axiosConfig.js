@@ -8,4 +8,8 @@ const api = axios.create({
   },
 });
 
-export default api;
+const db = axios.create({
+  baseURL: 'http://localhost:3000'
+})
+
+export default {api, db};

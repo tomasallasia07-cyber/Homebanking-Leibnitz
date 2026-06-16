@@ -10,9 +10,10 @@ export function PersonaProvider({ children }) {
   const [persona, setPersona] = useState(null)
   const [productos, setProductos] = useState([])
   const [cargando, setCargando] = useState(true)
-  const [tieneOnboarding, setTieneOnboarding] = useState(null) // null = todavia no se sabe
+  const [tieneOnboarding, setTieneOnboarding] = useState(null)
 
   const consultarPersona = useCallback(async () => {
+    setCargando(true)
     try {
       const { data } = await db.get('/auth/me')
       setPersona(data.persona)
@@ -36,7 +37,7 @@ export function PersonaProvider({ children }) {
   }, [isLoaded, isSignedIn, consultarPersona])
 
   return (
-    <PersonaContext.Provider value={{ persona, productos, cargando, tieneOnboarding }}>
+    <PersonaContext.Provider value={{ persona, productos, cargando, tieneOnboarding, refrescar: consultarPersona }}>
       {children}
     </PersonaContext.Provider>
   )

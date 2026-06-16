@@ -1,0 +1,80 @@
+.dashboard-container {
+  min-height: 100vh;
+  background-color: #f0f2f5;
+}
+
+.navbar {
+  background-color: white;
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.nav-titulo { color: #1a3c6e; margin: 0; }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.nav-link {
+  color: #1a3c6e;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.contenido {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+
+.bienvenida { color: #1a3c6e; }
+.seccion { color: #555; margin-top: 32px; }
+
+.card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.label { color: #888; }
+.valor { color: #333; font-weight: 500; }
+.saldo { color: #1a3c6e; font-weight: 700; font-size: 18px; }
+
+.acciones {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.boton, .boton-secundario {
+  flex: 1;
+  text-align: center;
+  padding: 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.boton {
+  background-color: #1a3c6e;
+  color: white;
+}
+
+.boton-secundario {
+  background-color: white;
+  color: #1a3c6e;
+  border: 1px solid #1a3c6e;
+}

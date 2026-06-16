@@ -1,10 +1,12 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { usePersona } from '../../context/PersonaContext'
 import axiosConfig from '../../api/axiosConfig'
 const { db } = axiosConfig;
 
 function RegisterPersonCentralBank() {
     const navigate = useNavigate()
+    const { refrescar } = usePersona()
 
     const [persona, setPersona] = useState({
         nombre: '', apellido: '', dni: '', direccion: '', email: '', telefono: '', fecha_nac: ''
@@ -18,6 +20,7 @@ function RegisterPersonCentralBank() {
         try {
             const { data } = await db.post('/personas', persona);
             console.log('Persona registrada:', data);
+            await refrescar() 
             navigate('/dashboard')
         } catch (error) {
             console.error('Error al registrar la persona:', error);
@@ -36,7 +39,6 @@ function RegisterPersonCentralBank() {
             <button onClick={postPersona}>Registrar Persona</button>
         </div>
     )
-
 }
 
 export default RegisterPersonCentralBank

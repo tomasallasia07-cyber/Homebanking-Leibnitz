@@ -5,7 +5,7 @@ export default function PaginaLogin() {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h1 className="login-titulo">🏦 Banco Leibnitz</h1>
+        <h1 className="login-titulo">🏦 Banco Accord</h1>
         <h2 className="login-subtitulo">Bienvenido</h2>
         <div className="login-botones">
           <SignInButton mode="modal">

@@ -11,12 +11,8 @@ import RegisterPersonCentralBank from './components/auth/registerPersonCentralBa
 function RutaProtegida({ children }) {
   return (
     <>
-      <SignedIn>
-        <PersonaProvider>{children}</PersonaProvider>
-      </SignedIn>
-      <SignedOut>
-        <Navigate to="/" replace />
-      </SignedOut>
+      <SignedIn>{children}</SignedIn>
+      <SignedOut><Navigate to="/" replace /></SignedOut>
     </>
   )
 }
@@ -29,41 +25,41 @@ function GateOnboarding({ children }) {
   return children
 }
 
+function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/" element={
+        <>
+          <SignedOut><PaginaLogin /></SignedOut>
+          <SignedIn><Navigate to="/dashboard" /></SignedIn>
+        </>
+      } />
+
+      <Route path="/onboarding" element={
+        <RutaProtegida><RegisterPersonCentralBank /></RutaProtegida>
+      } />
+
+      <Route path="/dashboard" element={
+        <RutaProtegida><GateOnboarding><Dashboard /></GateOnboarding></RutaProtegida>
+      } />
+      <Route path="/transferencias" element={
+        <RutaProtegida><GateOnboarding><Transferencias /></GateOnboarding></RutaProtegida>
+      } />
+      <Route path="/movimientos" element={
+        <RutaProtegida><GateOnboarding><Movimientos /></GateOnboarding></RutaProtegida>
+      } />
+    </Routes>
+  )
+}
+
 export default function App() {
   useAxiosAuth()
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={
-          <>
-            <SignedOut><PaginaLogin /></SignedOut>
-            <SignedIn><Navigate to="/dashboard" /></SignedIn>
-          </>
-        } />
-
-        <Route path="/onboarding" element={
-          <RutaProtegida>
-            <RegisterPersonCentralBank />
-          </RutaProtegida>
-        } />
-
-        <Route path="/dashboard" element={
-          <RutaProtegida>
-            <GateOnboarding><Dashboard /></GateOnboarding>
-          </RutaProtegida>
-        } />
-        <Route path="/transferencias" element={
-          <RutaProtegida>
-            <GateOnboarding><Transferencias /></GateOnboarding>
-          </RutaProtegida>
-        } />
-        <Route path="/movimientos" element={
-          <RutaProtegida>
-            <GateOnboarding><Movimientos /></GateOnboarding>
-          </RutaProtegida>
-        } />
-      </Routes>
+      <PersonaProvider>
+        <AppRoutes />
+      </PersonaProvider>
     </BrowserRouter>
   )
 }

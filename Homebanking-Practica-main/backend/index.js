@@ -5,7 +5,10 @@ const { clerkMiddleware } = require('@clerk/express');
 const pool = require('./src/db/conexion');
 const personaRoutes = require('./src/routes/personasRoutes');
 const authRoutes = require('./src/routes/authRoutes');
-const transaccionesRoutes = require('./src/routes/transaccionesRoutes');
+const movimientosRoutes = require('./src/routes/movimientosRoutes');
+const transferenciasRoutes = require('./src/routes/transferenciasRoutes.js');
+const { sincronizarEntrantes } = require('./src/controllers/transferenciasController');
+
 
 
 const app = express();
@@ -17,7 +20,8 @@ app.use(clerkMiddleware());
 
 app.use('/personas', personaRoutes);
 app.use('/auth', authRoutes);
-app.use('/transacciones', transaccionesRoutes);
+app.use('/movimientos', movimientosRoutes);
+app.use('/transferencias', transferenciasRoutes);
 
 app.get('/', (req, res) => {
     res.json({ mensaje: 'Servidor Funcionando' });
@@ -26,3 +30,7 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Servidor escuchando en puerto:${PORT}`);
 });
+
+const QUINCE_MINUTOS = 15 * 60 * 1000;
+setInterval(sincronizarEntrantes, QUINCE_MINUTOS);
+sincronizarEntrantes();

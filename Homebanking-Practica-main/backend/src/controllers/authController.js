@@ -4,9 +4,11 @@ const pool = require('../db/conexion');
 const getMe = async (req, res) => {
     try {
         const { userId } = getAuth(req);
+        console.log('userId recibido en backend:', userId);
         if (!userId) return res.status(401).json({ error: 'No autenticado' });
 
         const respuesta = await pool.query('SELECT * FROM personas WHERE clerk = $1', [userId]);
+        console.log('Filas encontradas:', respuesta.rows.length);
 
         if (respuesta.rows.length === 0) {
             return res.status(404).json({ error: 'Persona no encontrada' });

@@ -8,6 +8,8 @@ const authRoutes = require('./src/routes/authRoutes');
 const movimientosRoutes = require('./src/routes/movimientosRoutes');
 const transferenciasRoutes = require('./src/routes/transferenciasRoutes.js');
 const { sincronizarEntrantes } = require('./src/controllers/transferenciasController');
+const adminRoutes = require('./src/routes/adminRoutes');
+
 
 
 
@@ -22,6 +24,7 @@ app.use('/personas', personaRoutes);
 app.use('/auth', authRoutes);
 app.use('/movimientos', movimientosRoutes);
 app.use('/transferencias', transferenciasRoutes);
+app.use('/admin', adminRoutes);
 
 app.get('/', (req, res) => {
     res.json({ mensaje: 'Servidor Funcionando' });

@@ -11,6 +11,8 @@ export function PersonaProvider({ children }) {
   const [productos, setProductos] = useState([])
   const [cargando, setCargando] = useState(true)
   const [tieneOnboarding, setTieneOnboarding] = useState(null)
+  const [esAdmin, setEsAdmin] = useState(false)
+
 
   const consultarPersona = useCallback(async () => {
     setCargando(true)
@@ -19,6 +21,9 @@ export function PersonaProvider({ children }) {
       setPersona(data.persona)
       setProductos(data.productos)
       setTieneOnboarding(true)
+      const esAdmin = data.rol?.id_rol === 3
+      setEsAdmin(esAdmin)
+
     } catch (error) {
       if (error.response?.status === 404) {
         setTieneOnboarding(false)
@@ -37,7 +42,7 @@ export function PersonaProvider({ children }) {
   }, [isLoaded, isSignedIn, consultarPersona])
 
   return (
-    <PersonaContext.Provider value={{ persona, productos, cargando, tieneOnboarding, refrescar: consultarPersona }}>
+    <PersonaContext.Provider value={{ persona, productos, cargando, tieneOnboarding, esAdmin, refrescar: consultarPersona }}>
       {children}
     </PersonaContext.Provider>
   )

@@ -4,7 +4,7 @@ import { usePersona } from '../context/PersonaContext'
 import '../accord.css'
 
 function Dashboard() {
-  const { persona, productos, cargando } = usePersona()
+  const { persona, productos, cargando, esAdmin } = usePersona()
 
   if (cargando) return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--background)' }}>
@@ -79,6 +79,12 @@ function Dashboard() {
                 <span className="material-symbols-outlined">receipt_long</span>
                 Movimientos
               </Link>
+              {esAdmin && (
+                <Link to="/admin" className="btn btn--ghost" style={{ gap: 8 }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>admin_panel_settings</span>
+                  Panel Admin
+                </Link>
+              )}
             </div>
           </div>
 
@@ -108,7 +114,7 @@ function Dashboard() {
                     }}>Activa</span>
                   </div>
                   <p className="text-sm text-muted" style={{ fontFamily: 'var(--font-mono)', fontSize: 12, letterSpacing: '0.05em', marginBottom: 4 }}>
-                    CBU {producto.cbu?.slice(0, 4)} •••• {producto.cbu?.slice(-4)}
+                    CBU: {producto.cbu}
                   </p>
                   {producto.alias && (
                     <p className="text-sm text-muted" style={{ fontSize: 12 }}>Alias: {producto.alias}</p>

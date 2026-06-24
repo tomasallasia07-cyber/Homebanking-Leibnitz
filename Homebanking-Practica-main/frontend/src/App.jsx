@@ -7,6 +7,14 @@ import Dashboard from './pages/Dashboard'
 import Transferencias from './pages/Transferencias'
 import Movimientos from './pages/Movimientos'
 import RegisterPersonCentralBank from './components/auth/registerPersonCentralBank'
+import AdminDashboard from './pages/AdminDashboard'
+
+function RutaAdmin({ children }) {
+  const { esAdmin, cargando } = usePersona()
+  if (cargando) return <p>Cargando...</p>
+  if (!esAdmin) return <Navigate to="/dashboard" replace />
+  return children
+}
 
 function RutaProtegida({ children }) {
   return (
@@ -42,11 +50,17 @@ function AppRoutes() {
       <Route path="/dashboard" element={
         <RutaProtegida><GateOnboarding><Dashboard /></GateOnboarding></RutaProtegida>
       } />
+
       <Route path="/transferencias" element={
         <RutaProtegida><GateOnboarding><Transferencias /></GateOnboarding></RutaProtegida>
       } />
+
       <Route path="/movimientos" element={
         <RutaProtegida><GateOnboarding><Movimientos /></GateOnboarding></RutaProtegida>
+      } />
+
+      <Route path="/admin" element={
+        <RutaProtegida><RutaAdmin><AdminDashboard /></RutaAdmin></RutaProtegida>
       } />
     </Routes>
   )

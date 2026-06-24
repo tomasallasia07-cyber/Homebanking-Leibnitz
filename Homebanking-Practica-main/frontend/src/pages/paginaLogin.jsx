@@ -45,7 +45,8 @@ export default function PaginaLogin() {
             color: 'var(--on-surface-variant)',
           }}>
             <span className="material-symbols-outlined" style={{ fontSize: 14 }}>verified_user</span>
-            <span className="text-sm text-muted">Conexión encriptada de 256-bit</span>
+            <span className="text-sm text-muted">Secured by Clerk</span>
+            <span className="material-symbols-outlined" style={{ fontSize: 14 }}>verified_user</span>
           </div>
         </div>
       </div>
